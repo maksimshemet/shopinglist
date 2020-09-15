@@ -66,49 +66,42 @@ function MainWindow() {
   // old part finish
 }
 
+function taskContainer(title, description, priority, finishAt) {
+  const list = document.querySelector("div#task-list");
+  const taskElementA = document.createElement("a");
+  const taskElementDiv = document.createElement("div");
+  const taskElementH5 = document.createElement("h5");
+  const taskElementSmall1 = document.createElement("small");
+  const taskElementP = document.createElement("p");
+  const taskElementSmall2 = document.createElement("small");
+
+  taskElementH5.className = "font-weight-bold text-success";
+  taskElementSmall1.className = "font-weight-bold text-danger";
+  taskElementSmall2.className = "text-success font-weight-bold";
+  taskElementP.className = "mb-1 text-success";
+  taskElementA.className = "list-group-item list-group-item-action text-dark";
+  taskElementDiv.className = "d-flex w-100 justify-content-between";
+
+  taskElementH5.innerText = title;
+  taskElementP.innerText = description;
+  taskElementSmall2.innerText = priority;
+  taskElementSmall1.innerText = finishAt;
+
+  taskElementDiv.appendChild(taskElementH5);
+  taskElementDiv.appendChild(taskElementSmall1);
+  taskElementA.appendChild(taskElementDiv);
+  taskElementA.appendChild(taskElementP);
+  taskElementA.appendChild(taskElementSmall2);
+
+  list.appendChild(taskElementA);
+}
+
 function setTask() {
   ipcRenderer.on("task:add", function (e, task) {
     const info = document.querySelector("a#task-3");
     if (info) info.remove();
 
-    const list = document.querySelector("div#task-list");
-    const taskElementA = document.createElement("a");
-    const taskElementDiv = document.createElement("div");
-    const taskElementH5 = document.createElement("h5");
-    const taskElementSmall1 = document.createElement("small");
-    const taskElementP = document.createElement("p");
-    const taskElementSmall2 = document.createElement("small");
-
-    var taskTitle = document.createTextNode(task.title);
-    var taskDescription = document.createTextNode(task.description);
-    var taskPriority = document.createTextNode(task.priority);
-    var taskFinishAt = document.createTextNode(task.finishAt);
-
-    taskElementA.setAttribute(
-      "class",
-      "list-group-item list-group-item-action text-dark"
-    );
-    taskElementDiv.setAttribute(
-      "class",
-      "d-flex w-100 justify-content-between"
-    );
-    taskElementH5.setAttribute("class", "font-weight-bold text-success");
-    taskElementH5.appendChild(taskTitle);
-    taskElementSmall1.setAttribute("class", "font-weight-bold text-danger");
-    taskElementSmall1.appendChild(taskFinishAt);
-    taskElementSmall2.setAttribute("class", "text-success font-weight-bold");
-    taskElementSmall2.appendChild(taskPriority);
-    taskElementP.setAttribute("class", "mb-1 text-success");
-    taskElementP.appendChild(taskDescription);
-
-    taskElementDiv.appendChild(taskElementH5);
-    taskElementDiv.appendChild(taskElementSmall1);
-
-    taskElementA.appendChild(taskElementDiv);
-    taskElementA.appendChild(taskElementP);
-    taskElementA.appendChild(taskElementSmall2);
-
-    list.appendChild(taskElementA);
+    taskContainer(task.title, task.description, task.priority, task.finishAt);
   });
 }
 
