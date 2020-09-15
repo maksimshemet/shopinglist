@@ -1,12 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Shopinglist</title>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
     <h1>ShoppingList</h1>
-    <ul id="item_list">
+    <ul id="item_list"></ul>
 
-    </ul>
-</body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container justify-content-center d-inline">
+        <a
+          class="col-md-4 text-center navbar-brand mr-0 text-warning d-inline-block"
+          >Daily Tasker</a
+        >
+        <small
+          class="text-light align-center d-inline-block col-md-6 text-center"
+        >
+          ** Do not refresh the page! We aren't storing values!! **
+        </small>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row mt-5">
+        <div class="col-12">
+          <p class="text-center">
+            <a
+              class="btn btn-primary"
+              data-toggle="collapse"
+              href="#collapseItem"
+              role="button"
+              aria-expanded="false"
+              aria-controls="collapseItem"
+              >New Task</a
+            >
+          </p>
+          <div class="row justify-content-center">
+            <div class="col-md-9">
+              <div class="collapse multi-collapse" id="collapseItem">
+                <div class="card card-body">
+                  <form id="newTaskForm">
+                    <div class="form-group">
+                      <label for="titleFormControlInput">Title</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="title"
+                        id="titleFormControlInput"
+                        placeholder="Set your task name..."
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="descriptionFormControlTextarea"
+                        >Description</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="descriptionFormControlTextarea"
+                        rows="2"
+                        name="description"
+                        placeholder="Say something about your task..."
+                      ></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label for="priorityFormControlSelect">Priority</label>
+                      <select
+                        class="form-control"
+                        id="priorityFormControlSelect"
+                        name="priority"
+                      >
+                        <option value="1">Extremely important</option>
+                        <option value="2">Important</option>
+                        <option value="3">Need to do</option>
+                        <option value="4" selected>To do</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="finishAtFormControlDatetime"
+                        >Finish at:</label
+                      >
+                      <input
+                        name="finishAt"
+                        type="time"
+                        id="finishAtFormControlDatetime"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="row justify-content-center">
+                      <button
+                        type="reset"
+                        class="btn btn-danger mb-2 mt-2 mr-1"
+                      >
+                        Close</button
+                      ><button
+                        type="submit"
+                        class="btn btn-success mb-2 mt-2 ml-1"
+                      >
+                        Set Task
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 d-inline-block">
+          <h2 class="col d-inline">Your daily tasks list:</h2>
+          <span class="col ml-2 d-inline text-muted small align-baseline"
+            >(click tasks to complete em)</span
+          >
+        </div>
+      </div>
+      <div class="row my-4 justify-content-center">
+        <div class="col-12">
+          <div id="task-list" class="list-group">
+            <a
+              id="task-3"
+              href="#"
+              class="list-group-item list-group-item-action disabled text-center"
+              tabindex="-1"
+              aria-disabled="true"
+              >Empty task list, add new tasks...</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
 </html>

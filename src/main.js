@@ -71,6 +71,12 @@ ipcMain.on("item:add", function (e, item) {
   addWindow.close();
 });
 
+//new par Taks
+ipcMain.on("task:add", function (e, task) {
+  console.log(task);
+  mainWindow.webContents.send("task:add", task);
+});
+
 // Create menu template
 const mainMenuTemplate = [
   {
