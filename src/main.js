@@ -8,17 +8,19 @@ const FileSync = require("lowdb/adapters/FileSync");
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 let mainWindow;
 
-fs.mkdir("db/", { recursive: true }, (err) => {
-  if (err) throw err;
-});
+if (!fs.existsSync("db/")) {
+  fs.mkdir("db/", { recursive: true }, (err) => {
+    if (err) throw err;
+  });
 
-fs.writeFile("db/db.json", "", function (err) {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("The file was saved!");
-  }
-});
+  fs.writeFile("db/db.json", "", function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("The file was saved!");
+    }
+  });
+}
 
 const adapter = new FileSync("db/db.json");
 const db = low(adapter);
