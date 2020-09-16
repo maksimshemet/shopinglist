@@ -1,16 +1,27 @@
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
+const fs = require("fs");
 const shortid = require("shortid");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
-
-const adapter = new FileSync("db/db.json");
-const db = low(adapter);
-
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 let mainWindow;
 
+fs.mkdir("db/", { recursive: true }, (err) => {
+  if (err) throw err;
+});
+
+fs.writeFile("db/db.json", "", function (err) {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("The file was saved!");
+  }
+});
+
+const adapter = new FileSync("db/db.json");
+const db = low(adapter);
 db.defaults({ tasks: [] }).write();
 
 // Listen for app to be ready
