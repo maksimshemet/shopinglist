@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "electron": "^10.1.1",
-    "form-serialize": "^0.7.2"
+    "form-serialize": "^0.7.2",
+    "lowdb": "^1.0.0",
+    "shortid": "^2.2.15"
   }
 }

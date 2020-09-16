@@ -1,10 +1,17 @@
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
+const shortid = require("shortid");
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+
+const adapter = new FileSync("db/db.json");
+const db = low(adapter);
 
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 let mainWindow;
-let addWindow;
+
+db.defaults({ tasks: [] }).write();
 
 // Listen for app to be ready
 
@@ -38,69 +45,38 @@ app.on("ready", function () {
   Menu.setApplicationMenu(mainMenu);
 });
 
-// Handle createAddWindow
-function createAddWindow() {
-  addWindow = new BrowserWindow({
-    width: 300,
-    height: 200,
-    title: "Add Shoppindg List Item",
-    webPreferences: {
-      nodeIntegration: false, // is default value after Electron v5
-      contextIsolation: true, // protect against prototype pollution
-      enableRemoteModule: false, // turn off remote
-      preload: path.join(__dirname, "preload.js"), // use a preload script
-    },
-  });
-  // Load html into window
-  addWindow.loadURL(
-    url.format({
-      pathname: path.join("public", "addWindow.html"),
-      protocol: "file:",
-      slashes: true,
-    })
-  );
-  // Garbage Collection Handle
-  addWindow.on("close", function () {
-    addWindow = null;
-  });
+function sendTask(task) {
+  let taskId = shortid.generate();
+  task["id"] = taskId;
+  // Add a task
+  mainWindow.webContents.send("task:add", task, taskId);
+  console.log(task);
 }
 
-// Catch item:add
-ipcMain.on("item:add", function (e, item) {
-  mainWindow.webContents.send("item:add", item);
-  addWindow.close();
+ipcMain.on("task:sync", function () {
+  const tasks = db.defaults({ tasks: [] }).get("tasks").value();
+  for (index in tasks) {
+    sendTask(tasks[index]);
+  }
 });
 
 //new par Taks
 ipcMain.on("task:add", function (e, task) {
-  console.log(task);
-  mainWindow.webContents.send("task:add", task);
+  sendTask(task);
+  db.get("tasks").push(task).write();
+});
+
+// del task from db
+ipcMain.on("task:del", function (e, taskId) {
+  taskId = taskId.match(/task-id-(.*)/)[1];
+  console.log("Task with task ID: " + taskId + " delated!");
+  db.get("tasks").remove({ id: taskId }).write();
 });
 
 // Create menu template
 const mainMenuTemplate = [
   {
-    label: "File",
-    submenu: [
-      {
-        label: "Add Item",
-        click() {
-          createAddWindow();
-        },
-      },
-      {
-        label: "Clear Item",
-        click() {
-          mainWindow.webContents.send("item:clear");
-        },
-      },
-      {
-        label: "Quit",
-        click() {
-          app.quit();
-        },
-      },
-    ],
+    label: "Donate",
   },
 ];
 
