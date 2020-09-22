@@ -73,6 +73,19 @@ ipcMain.on("task:sync", function () {
   }
 });
 
+function syncAlert() {
+  const tasks = db.defaults({ tasks: [] }).get("tasks").value();
+  for (index in tasks) {
+    mainWindow.webContents.send(
+      "alert:sync",
+      tasks[index].id,
+      tasks[index].finishAt
+    );
+  }
+}
+
+setInterval(() => syncAlert(), 15000);
+
 //new par Taks
 ipcMain.on("task:add", function (e, task) {
   sendTask(task);

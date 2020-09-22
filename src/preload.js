@@ -45,20 +45,19 @@ function MainWindow() {
   const task = document.querySelector("div#task-list");
   if (task)
     task.addEventListener("dblclick", (e) => {
-      if (
-        e.path[1].className ===
+      let toDelateTask = e.target;
+      while (
+        toDelateTask.className !=
         "list-group-item list-group-item-action text-dark"
       ) {
-        ipcRenderer.send("task:del", e.path[1].id);
-        e.path[1].remove();
-      } else {
-        ipcRenderer.send("task:del", e.path[0].id);
-        e.path[0].remove();
+        toDelateTask = toDelateTask.parentNode;
       }
+      ipcRenderer.send("task:del", toDelateTask.id);
+      toDelateTask.remove();
     });
 }
 
-function taskContainer(taskID, title, description, priority, finishAt) {
+function taskContainer(taskID, title, description, priority, finishAt, fAt) {
   const list = document.querySelector("div#task-list");
   const taskElementA = document.createElement("a");
   const taskElementDiv = document.createElement("div");
@@ -66,6 +65,7 @@ function taskContainer(taskID, title, description, priority, finishAt) {
   const taskElementSmall1 = document.createElement("small");
   const taskElementP = document.createElement("p");
   const taskElementSmall2 = document.createElement("small");
+  const taskElementSmall3 = document.createElement("small");
 
   taskElementA.id = taskID;
 
@@ -80,9 +80,11 @@ function taskContainer(taskID, title, description, priority, finishAt) {
   taskElementP.innerText = description;
   taskElementSmall2.innerText = priority;
   taskElementSmall1.innerText = finishAt;
+  taskElementSmall3.innerText = fAt;
 
   taskElementDiv.appendChild(taskElementH5);
   taskElementDiv.appendChild(taskElementSmall1);
+  taskElementDiv.appendChild(taskElementSmall3);
   taskElementA.appendChild(taskElementDiv);
   taskElementA.appendChild(taskElementP);
   taskElementA.appendChild(taskElementSmall2);
@@ -90,16 +92,45 @@ function taskContainer(taskID, title, description, priority, finishAt) {
   list.appendChild(taskElementA);
 }
 
+function timeAlert(deadline) {
+  const now = new Date();
+  const timeArray = deadline.split(":");
+  let hours = parseInt(timeArray[0]);
+  let nowHours = now.getHours();
+  let minutes = parseInt(timeArray[1]);
+  let nowMinutes = now.getMinutes();
+
+  if (hours == nowHours && minutes <= nowMinutes) {
+    return "fuck you!!";
+  }
+
+  hours = hours - nowHours;
+  minutes > nowMinutes
+    ? (minutes = minutes - nowMinutes)
+    : (minutes = 60 - Math.abs(minutes - nowMinutes));
+  if (minutes != 0) {
+    hours > 0 ? hours-- : (hours = 0);
+  }
+
+  return hours + " Hours and " + minutes + " Minutes before Deadline!";
+}
+
+function updateDeadline(obj, deadline) {
+  let alert = timeAlert(deadline);
+  obj.innerText = alert;
+}
+
 function setTask() {
   ipcRenderer.on("task:add", function (e, task, taskId) {
     const info = document.querySelector("a#task-3");
     if (info) info.remove();
-
+    let alert = timeAlert(task.finishAt);
     taskContainer(
       "task-id-" + taskId,
       task.title,
       task.description,
       task.priority,
+      alert,
       task.finishAt
     );
   });
@@ -108,6 +139,10 @@ function setTask() {
 //new part finish
 window.addEventListener("DOMContentLoaded", () => {
   ipcRenderer.send("task:sync");
+  ipcRenderer.on("alert:sync", function (e, taskId, deadline) {
+    const obj = document.querySelector("a#task-id-" + taskId);
+    updateDeadline(obj.querySelector("small"), deadline);
+  });
   //AdditionalWindow();
   MainWindow();
   setTask();
